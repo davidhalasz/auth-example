@@ -1,16 +1,8 @@
 const authService = require("../services/authService");
-const bcrypt = require("bcryptjs");
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-  res.status(200).json({ email: email, password: password });
-};
 
 const createUser = async (req, res, next) => {
-  const { email, password } = req.body;
-  const encryptedPassword = await bcrypt.hash(password, 10);
- 
   authService
-    .isEmailExists(email)
+    .isEmailExists(req.body.email)
     .then((data) => {
       if (data) {
         return res
@@ -18,10 +10,40 @@ const createUser = async (req, res, next) => {
           .json({ msg: "This email address already exists." });
       }
 
+      authService.createUser(req.body).then((createdUser) => {
+        return res.status(201).json({ createdUser, msg: "User created." });
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({ msg: err });
+    });
+};
+
+const login = (req, res, next) => {
+  authService
+    .isEmailExists(req.body.email)
+    .then((data) => {
+      if (!data) {
+        return res.status(401).json({ msg: "This email is not exist." });
+      }
+
       authService
-        .createUser({ email: email, password: encryptedPassword })
-        .then((createdUser) => {
-          return res.status(201).json({ createdUser, msg: "User created." });
+        .checkPassword({
+          password: data.password,
+          plainPassword: req.body.password,
+        })
+        .then((boolValue) => {
+            console.log(boolValue);
+          if (boolValue) {
+            return res
+              .status(200)
+              .json({ email: data.email, msg: "User logged in." });
+          }
+
+          return res.status(402).json({ msg: "Invalid password." });
+        })
+        .catch((err) => {
+          return res.status(500).json({ msg: err });
         });
     })
     .catch((err) => {
