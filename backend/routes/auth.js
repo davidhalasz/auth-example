@@ -55,8 +55,12 @@ const validateRequest = (req, res, next) => {
  *               $ref: '#/components/schemas/User'
  *       500:
  *         description: Some server error
- *       400:
+ *       401:
  *         description: Validation exception
+ *       402:
+ *         description: Email not exists
+ *       403:
+ *         description: Invalid password
  */
 router.post('/login', authValidator, validateRequest, authController.login);
 

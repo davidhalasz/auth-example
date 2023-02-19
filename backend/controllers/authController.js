@@ -24,7 +24,7 @@ const login = (req, res, next) => {
     .isEmailExists(req.body.email)
     .then((data) => {
       if (!data) {
-        return res.status(401).json({ msg: "This email is not exist." });
+        return res.status(402).json({ msg: "This email is not exist." });
       }
 
       authService
@@ -33,14 +33,13 @@ const login = (req, res, next) => {
           plainPassword: req.body.password,
         })
         .then((boolValue) => {
-            console.log(boolValue);
           if (boolValue) {
             return res
               .status(200)
               .json({ email: data.email, msg: "User logged in." });
           }
 
-          return res.status(402).json({ msg: "Invalid password." });
+          return res.status(403).json({ msg: "Invalid password." });
         })
         .catch((err) => {
           return res.status(500).json({ msg: err });
