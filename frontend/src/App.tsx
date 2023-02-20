@@ -1,13 +1,8 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Auth from "./pages/auth/auth";
 
 function App() {
-  return (
-    <div className="bg-slate-500 h-screen w-screen">
-      
-    </div>
-  );
+  return <Auth />;
 }
 
 export default App;
