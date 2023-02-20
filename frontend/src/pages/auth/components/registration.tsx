@@ -1,6 +1,7 @@
 import { Fragment } from "react";
+type RegistrationProps = { currentFormHandler: () => void };
 
-const Registration = () => {
+const Registration = ({currentFormHandler}: RegistrationProps) => {
   return (
     <Fragment>
       <h1 className="text-4xl font-extrabold text-center">Registration</h1>
@@ -66,7 +67,7 @@ const Registration = () => {
           />
         </div>
         <div className="grid grid-cols-2">
-            <button type="button" className="font-bold text-slate-800 hover:text-customColor1 text-lg">
+            <button type="button" className="font-bold text-slate-800 hover:text-customColor1 text-lg" onClick={currentFormHandler}>
                 Go to login form 
             </button>
           <button
