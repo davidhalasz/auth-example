@@ -1,6 +1,6 @@
-import { useState } from "react";
-import Login from "./components/login";
-import Registration from "./components/registration";
+import { useLocation, useNavigate } from "react-router-dom";
+import Login from "./components/Login";
+import Registration from "./components/Registration";
 
 const LOGIN_STYLE = 'absolute z-20 w-[450px] h-[350px] shadow-xl';
 const REGISTER_STYLE = 'absolute z-20 w-[450px] h-[500px] shadow-xl';
@@ -8,19 +8,20 @@ const LOGIN_BG_TRANSITION = {maxHeight: "200px", transition: "max-height 0.15s e
 const REGISTER_BG_TRANSITION = {maxHeight: "350px", transition: "max-height 0.15s ease-in"};
 
 const Auth = () => {
-  const [currentForm, setCurrentForm] = useState("register");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const currentFormHandler = () => {
-    if (currentForm === "login") {
-      setCurrentForm("register");
+    if (location.pathname === "/login") {
+      navigate('/register');
     } else {
-      setCurrentForm("login");
+      navigate('/login')
     }
   };
 
   return (
     <div className="relative h-screen w-screen bg-slate-800 flex items-center justify-center">
-      <div className={currentForm === 'register' ? REGISTER_STYLE : LOGIN_STYLE}>
+      <div className={location.pathname === '/register' ? REGISTER_STYLE : LOGIN_STYLE}>
         <div className="relative h-full w-full">
           <div className="absolute z-20 h-full w-full">
             <div className="h-1/4 w-full bg-customColor1"></div>
@@ -29,7 +30,7 @@ const Auth = () => {
             <div className="h-1/4 w-full bg-customColor4"></div>
           </div>
           <div className="absolute z-30 h-full w-full p-4">
-            {currentForm === "register" ? (
+            {location.pathname === "/register" ? (
               <Registration currentFormHandler={currentFormHandler} />
             ) : (
               <Login currentFormHandler={currentFormHandler} />
@@ -37,7 +38,7 @@ const Auth = () => {
           </div>
         </div>
       </div>
-      <div style={currentForm === 'register' ? REGISTER_BG_TRANSITION : LOGIN_BG_TRANSITION} className="absolute z-10 w-full h-[300px]">
+      <div style={location.pathname === '/register' ? REGISTER_BG_TRANSITION : LOGIN_BG_TRANSITION} className="absolute z-10 w-full h-[300px]">
         <div className="h-full w-full">
           <div className="h-1/4 w-full bg-customColor1"></div>
           <div className="h-1/4 w-full bg-customColor2"></div>
