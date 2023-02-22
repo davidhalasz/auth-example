@@ -11,7 +11,7 @@ const createUser = async (req, res, next) => {
       }
 
       authService.createUser(req.body).then((createdUser) => {
-        return res.status(201).json({ createdUser, msg: "User created." });
+        return res.status(201).json({ user: createdUser, msg: "User created." });
       });
     })
     .catch((err) => {

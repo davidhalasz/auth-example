@@ -21,6 +21,9 @@ const validateRequest = (req, res, next) => {
  *       type: object
  *       required: true
  *       properties:
+ *         username:
+ *           type: string
+ *           description: The user's username
  *         email:
  *           type: string
  *           description: The user's email address
@@ -28,6 +31,7 @@ const validateRequest = (req, res, next) => {
  *           type: string
  *           description: The user's passsword
  *       example:
+ *         username: john
  *         email: email@email.com
  *         password: password123
  */
