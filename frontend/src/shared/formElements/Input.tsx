@@ -73,15 +73,12 @@ const Input = (props: {
   return (
     <div className="form-control">
       <label
-        className="block mb-2 text-sm font-medium text-slate-900"
+        className={`block mb-2 text-sm font-medium text-slate-900 ${inputState.isTouched && "text-red-500"}`}
         htmlFor={props.id}
       >
-        {props.label}
+        {inputState.isTouched ? props.errorText : props.label}
       </label>
       {input}
-      {inputState.isTouched && (
-        <p className="text-red-500">{props.errorText}</p>
-      )}
     </div>
   );
 };
