@@ -54,7 +54,7 @@ var app = express();
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:9000"],
+    origin: ["http://localhost:3000"],
   })
 );
 

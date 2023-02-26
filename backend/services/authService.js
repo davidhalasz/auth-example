@@ -1,10 +1,11 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
-const createUser = ({ email, password }) => {
+const createUser = ({ email, password, username }) => {
   return new Promise( async (resolve, reject) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
+      username: username,
       email: email,
       password: encryptedPassword,
     });

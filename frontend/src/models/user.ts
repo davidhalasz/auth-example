@@ -1,21 +1,21 @@
 interface UserInterface {
-    id: number | null;
+    id?: string;
     username: string;
     email: string;
     password: string;
 }
    
 class User implements UserInterface {
-    id: number | null;
+    id?: string;
     username: string;
     email: string;
     password: string;
    
-    constructor(id: number, username: string, email: string, password: string) {
+    constructor(username: string, email: string, password: string, id?: string) {
       this.id = id;
-      this.username = username,
-      this.email = email,
-      this.password = password
+      this.username = username;
+      this.email = email;
+      this.password = password;
     }
 }
 

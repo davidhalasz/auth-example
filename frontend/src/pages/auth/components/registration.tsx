@@ -1,11 +1,42 @@
-import { Fragment } from "react";
+import axios from "axios";
+import { Fragment, useState } from "react";
+import User from "../../../models/user";
 type RegistrationProps = { currentFormHandler: () => void };
 
 const Registration = ({currentFormHandler}: RegistrationProps) => {
+  const [formState, setFormState] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirm_password: '',
+  });
+
+  const handleFormChange = (event: any) => {
+    setFormState({
+      ...formState,
+      [event.target.id]: event.target.value
+    });
+  } 
+
+  const handleRegisterSubmit = async (event: any) => {
+    event.preventDefault();
+    if(formState.password === formState.confirm_password) {
+      const user: User = new User(formState.username, formState.email, formState.password);
+      try {
+        let response = await axios.post("http://localhost:9000/api/auth/register", {
+          ...user
+        });
+        console.log(response);
+      } catch (error: any) {
+        if(error.response) console.log(error.response.data.msg);
+      }
+    }
+  }
+
   return (
     <Fragment>
       <h1 className="text-4xl font-extrabold text-center text-slate-800">Registration</h1>
-      <form>
+      <form onSubmit={handleRegisterSubmit}>
         <div className="mb-6">
           <label
             htmlFor="username"
@@ -18,6 +49,8 @@ const Registration = ({currentFormHandler}: RegistrationProps) => {
             id="username"
             className="bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="John"
+            value={formState.username}
+            onChange={handleFormChange}
             required
           />
         </div>
@@ -33,6 +66,8 @@ const Registration = ({currentFormHandler}: RegistrationProps) => {
             id="email"
             className="bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="john.doe@company.com"
+            value={formState.email}
+            onChange={handleFormChange}
             required
           />
         </div>
@@ -48,6 +83,8 @@ const Registration = ({currentFormHandler}: RegistrationProps) => {
             id="password"
             className="bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="•••••••••"
+            value={formState.password}
+            onChange={handleFormChange}
             required
           />
         </div>
@@ -63,6 +100,8 @@ const Registration = ({currentFormHandler}: RegistrationProps) => {
             id="confirm_password"
             className="bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="•••••••••"
+            value={formState.confirm_password}
+            onChange={handleFormChange}
             required
           />
         </div>
