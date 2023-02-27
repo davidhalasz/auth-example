@@ -1,21 +1,29 @@
 import React, { useEffect, useReducer } from "react";
+import { validate, ValidatorsInterface } from "../utils/validators";
 
 interface InputState {
   value: string;
   isTouched: boolean;
+  isValid: boolean;
 }
 
-type InputAction = { type: "CHANGE"; value: string } | { type: "BLUR" };
-
-const initialInputState: InputState = {
-  value: "",
-  isTouched: false,
-};
+type InputAction =
+  | {
+      validators: ValidatorsInterface[];
+      type: "CHANGE";
+      value: string;
+    }
+  | { type: "BLUR" };
 
 const inputReducer = (state: InputState, action: InputAction) => {
   switch (action.type) {
     case "CHANGE":
-      return { ...state, value: action.value, isTouched: true };
+      return {
+        ...state,
+        value: action.value,
+        isTouched: false,
+        isValid: validate(action.value, action.validators),
+      };
     case "BLUR":
       return { ...state, isTouched: true };
     default:
@@ -31,36 +39,40 @@ const Input = (props: {
   label?: string;
   errorText?: string;
   onInput?: any;
+  validators: ValidatorsInterface[];
+  valid?: boolean;
 }) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: props.value || '',
+    value: props.value || "",
     isTouched: false,
+    isValid: props.valid || false,
   });
 
   const { id, onInput } = props;
-  const { value } = inputState;
+  const { value, isValid } = inputState;
 
   useEffect(() => {
-    onInput(id, value);
-  }, [id, onInput, value]);
+    onInput(id, value, isValid);
+  }, [id, onInput, value, isValid]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-      dispatch({
-        type: "CHANGE",
-        value: event.target.value,
-      });
+    dispatch({
+      type: "CHANGE",
+      value: event.target.value,
+      validators: props.validators,
+    });
   };
 
   const touchHandler = () => {
     dispatch({
-        type: "BLUR",
-      });
-  }
+      type: "BLUR",
+    });
+  };
 
   const input = (
     <input
       className={`bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500
-        ${inputState.isTouched && "border-red-500"}`}
+        ${(!inputState.isValid && inputState.isTouched) ? "border-red-500" : "border-green-500" }`}
       id={props.id}
       type={props.type}
       placeholder={props.placeholder}
@@ -73,10 +85,14 @@ const Input = (props: {
   return (
     <div className="form-control">
       <label
-        className={`block mb-2 text-sm font-medium text-slate-900 ${inputState.isTouched && "text-red-500"}`}
+        className={`block mb-2 text-sm font-medium text-slate-900 ${
+          (!inputState.isValid && inputState.isTouched) ? "text-red-400" : "text-black"
+        }`}
         htmlFor={props.id}
       >
-        {inputState.isTouched ? props.errorText : props.label}
+        {(!inputState.isValid && inputState.isTouched)
+          ? props.errorText
+          : props.label}
       </label>
       {input}
     </div>
