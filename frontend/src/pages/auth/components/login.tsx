@@ -1,14 +1,18 @@
-import axios from "axios";
+
 import { Fragment } from "react";
+import { useAppDispatch } from "../../../app/store";
 import Input from "../../../shared/formElements/Input";
 import { useForm } from "../../../shared/hooks/form-hook";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_REQUIRE,
 } from "../../../shared/utils/validators";
+import { loginType, loginUser } from "../../../slices/authSlice";
 type LoginProps = { currentFormHandler: () => void };
 
 const Login = ({ currentFormHandler }: LoginProps) => {
+  const dispatch = useAppDispatch();
+  
   const [formState, inputHandler] = useForm(
     {
       email: {
@@ -23,17 +27,12 @@ const Login = ({ currentFormHandler }: LoginProps) => {
     false
   );
 
-  const handleLoginSubmit = async (event: any) => {
+  const handleLoginSubmit = (event: any) => {
     event.preventDefault();
-    try {
-      let response = await axios.post("http://localhost:9000/api/auth/login", {
-        email: formState.inputs.email.value,
-        password: formState.inputs.password.value,
-      });
-      console.log(response);
-    } catch (error: any) {
-      if (error.response) console.log(error.response.data.msg);
-    }
+    const email = formState.inputs.email.value;
+    const password = formState.inputs.password.value;
+    const credentials: loginType = {email, password};
+    dispatch(loginUser(credentials));
   };
 
   return (
