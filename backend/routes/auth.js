@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 const authController = require('../controllers/authController');
 const {  validationResult} = require('express-validator');
-const authValidator = require('./validators/authValidator');
+const registerValidator = require('./validators/registerValidator');
+const loginValidator = require('./validators/loginValidator');
 
 const validateRequest = (req, res, next) => {
     const errors = validationResult(req);
@@ -32,7 +33,7 @@ const validateRequest = (req, res, next) => {
  *           description: The user's passsword
  *       example:
  *         username: john
- *         email: email@email.com
+ *         email: john@email.com
  *         password: password123
  */
 
@@ -49,14 +50,38 @@ const validateRequest = (req, res, next) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             required: true
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: john@email.com
+ *               password:
+ *                 type: string
+ *                 example: password
  *     responses:
  *       200:
  *         description: The user logged in.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               user:
+ *                 type: object
+ *                 required: true
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                     description: The user's username
+ *                   email:
+ *                     type: string
+ *                     description: The user's email address
+ *                   password:
+ *                     type: string
+ *                     description: The user's passsword
+ *                 example:
+ *                   username: john
+ *                   email: john@email.com
+ *         
  *       500:
  *         description: Some server error
  *       401:
@@ -66,7 +91,7 @@ const validateRequest = (req, res, next) => {
  *       403:
  *         description: Invalid password
  */
-router.post('/login', authValidator, validateRequest, authController.login);
+router.post('/login', loginValidator, validateRequest, authController.login);
 
 /**
  * @swagger
@@ -96,7 +121,7 @@ router.post('/login', authValidator, validateRequest, authController.login);
  *       402:
  *         description: The email was taken
  */
-router.post('/register', authValidator, validateRequest, authController.createUser);
+router.post('/register', registerValidator, validateRequest, authController.createUser);
 
 
 module.exports = router;

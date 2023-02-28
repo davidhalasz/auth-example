@@ -1,39 +1,67 @@
+import axios from "axios";
 import { Fragment } from "react";
-type RegistrationProps = { currentFormHandler: () => void };
+import Input from "../../../shared/formElements/Input";
+import { useForm } from "../../../shared/hooks/form-hook";
+import {
+  VALIDATOR_EMAIL,
+  VALIDATOR_REQUIRE,
+} from "../../../shared/utils/validators";
+type LoginProps = { currentFormHandler: () => void };
 
-const Login = ({currentFormHandler}: RegistrationProps) => {
+const Login = ({ currentFormHandler }: LoginProps) => {
+  const [formState, inputHandler] = useForm(
+    {
+      email: {
+        value: "",
+        isValid: false,
+      },
+      password: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
+
+  const handleLoginSubmit = async (event: any) => {
+    event.preventDefault();
+    try {
+      let response = await axios.post("http://localhost:9000/api/auth/login", {
+        email: formState.inputs.email.value,
+        password: formState.inputs.password.value,
+      });
+      console.log(response);
+    } catch (error: any) {
+      if (error.response) console.log(error.response.data.msg);
+    }
+  };
+
   return (
     <Fragment>
-      <h1 className="text-4xl font-extrabold text-center text-slate-800">Login</h1>
-      <form>
+      <h1 className="text-4xl font-extrabold text-center text-slate-800">
+        Login
+      </h1>
+      <form onSubmit={handleLoginSubmit}>
         <div className="mb-6">
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-slate-800"
-          >
-            Email address
-          </label>
-          <input
-            type="email"
+          <Input
             id="email"
-            className="bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="john.doe@company.com"
-            required
+            type="text"
+            label="Email"
+            placeholder="john@email.com"
+            errorText="Email is required"
+            onInput={inputHandler}
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
           />
         </div>
         <div className="mb-6">
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-slate-800"
-          >
-            Password
-          </label>
-          <input
-            type="password"
+          <Input
             id="password"
-            className="bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="•••••••••"
-            required
+            type="password"
+            label="Password"
+            placeholder="********"
+            errorText="Password field is required"
+            onInput={inputHandler}
+            validators={[VALIDATOR_REQUIRE()]}
           />
         </div>
         <div className="grid grid-cols-2 pt-10">

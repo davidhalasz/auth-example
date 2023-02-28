@@ -34,9 +34,10 @@ const login = (req, res, next) => {
         })
         .then((boolValue) => {
           if (boolValue) {
+            let foundUser = {email: data.email, username: data.username};
             return res
               .status(200)
-              .json({ email: data.email, msg: "User logged in." });
+              .json({ user: foundUser, msg: "User logged in." });
           }
 
           return res.status(403).json({ msg: "Invalid password." });

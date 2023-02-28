@@ -34,19 +34,19 @@ const formReducer = (state: FormState, action: FormAction) : FormState => {
 }
 
 export const useForm = (initialInputs: any, initialFormValidity: boolean) : any[] => {
-    const [formState, dispatch] = useReducer(formReducer, {
-      inputs: initialInputs,
-      isValid: initialFormValidity,
+  const [formState, dispatch] = useReducer(formReducer, {
+    inputs: initialInputs,
+    isValid: initialFormValidity,
+  });
+  
+  const inputHandler = useCallback((id: string, value: string, isValid: boolean) => {
+    dispatch({
+      type: "INPUT_CHANGE",
+      value: value,
+      inputId: id,
+      isValid: isValid,
     });
+  }, []);
   
-    const inputHandler = useCallback((id: string, value: string, isValid: boolean) => {
-      dispatch({
-        type: "INPUT_CHANGE",
-        value: value,
-        inputId: id,
-        isValid: isValid,
-      });
-    }, []);
-  
-    return [formState, inputHandler];
-  };
+  return [formState, inputHandler];
+};
