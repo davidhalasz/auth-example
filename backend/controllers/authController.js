@@ -55,7 +55,6 @@ const login = (req, res, next) => {
 };
 
 const getCurrentUser = async (req, res, next) => {
-  req.session.username = "helloo";
   if (!req.session.jwt) {
     return res.status(401).json({ msg: "Token is expired!" });
   }
@@ -75,8 +74,16 @@ const getCurrentUser = async (req, res, next) => {
   res.status(200).json({ user });
 };
 
+const logout = async (req, res, next) => {
+  req.session.destroy(err => {
+    if(err) return res.status(400).json({msg: "Ooops...Something went wrong."});
+    res.status(200).json({msg: 'Logged out.'});
+  });
+};
+
 module.exports = {
   login,
   createUser,
   getCurrentUser,
+  logout,
 };

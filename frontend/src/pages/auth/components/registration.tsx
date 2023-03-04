@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import User from "../../../models/user";
 import { useForm } from "../../../shared/hooks/form-hook";
 import Input from "../../../shared/formElements/Input";
@@ -8,10 +8,16 @@ import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../../shared/utils/validators";
+import { useAppDispatch, useAppSelector } from "../../../app/store";
+import { getCurrentUser } from "../../../slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 type RegistrationProps = { currentFormHandler: () => void };
 
 const Registration = ({ currentFormHandler }: RegistrationProps) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const {isLoading, data} = useAppSelector(state => state.auth);
   const [formState, inputHandler] = useForm(
     {
       username: {
@@ -33,6 +39,14 @@ const Registration = ({ currentFormHandler }: RegistrationProps) => {
     },
     false
   );
+
+  useEffect(() => {
+    dispatch(getCurrentUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    !isLoading && data && navigate("/dashboard");
+  }, [isLoading, data, navigate]);
 
   const handleRegisterSubmit = async (event: any) => {
     event.preventDefault();

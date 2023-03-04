@@ -1,17 +1,20 @@
 
-import { Fragment } from "react";
-import { useAppDispatch } from "../../../app/store";
+import { Fragment, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../app/store";
 import Input from "../../../shared/formElements/Input";
 import { useForm } from "../../../shared/hooks/form-hook";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_REQUIRE,
 } from "../../../shared/utils/validators";
-import { loginType, loginUser } from "../../../slices/authSlice";
+import { getCurrentUser, loginType, loginUser } from "../../../slices/authSlice";
 type LoginProps = { currentFormHandler: () => void };
 
 const Login = ({ currentFormHandler }: LoginProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const {isLoading, data} = useAppSelector((state) => state.auth);
   
   const [formState, inputHandler] = useForm(
     {
@@ -27,6 +30,14 @@ const Login = ({ currentFormHandler }: LoginProps) => {
     false
   );
 
+  useEffect(() => {
+    dispatch(getCurrentUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if(!isLoading && data) navigate('/dashboard');
+  }, [isLoading, data, navigate]);
+
   const handleLoginSubmit = (event: any) => {
     event.preventDefault();
     const email = formState.inputs.email.value;
@@ -34,6 +45,8 @@ const Login = ({ currentFormHandler }: LoginProps) => {
     const credentials: loginType = {email, password};
     dispatch(loginUser(credentials));
   };
+
+
 
   return (
     <Fragment>

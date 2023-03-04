@@ -52,8 +52,9 @@ export const getCurrentUser = createAsyncThunk<User>(
 );
 
 export const logout = createAsyncThunk('auth/logout', async (_, thunkApi) => {
+  console.log('called logout');
   try {
-    axios.delete("http://localhost:9000/api/auth/logout");
+    axios.delete("http://localhost:9000/api/auth/logout", {withCredentials: true});
   } catch (error: any) {
     console.log(error.response.data.msg);
     return thunkApi.rejectWithValue({erros: error.response.data.msg as string});
@@ -83,18 +84,24 @@ export const authSlice = createSlice({
     });
 
     //check user
-    builder.addCase(getCurrentUser.fulfilled, (state, action) => {
+    builder.addCase(getCurrentUser.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    .addCase(getCurrentUser.fulfilled, (state, action) => {
       state.data = action.payload;
       state.isLoggedIn = true;
+      state.isLoading = false;
     })
     .addCase(getCurrentUser.rejected, (state, action) => {
       state.message = action.payload;
       state.isLoggedIn = false;
+      state.isLoading = false;
     });
 
     //logout
     builder.addCase(logout.fulfilled, (state, action) => {
       state.data = null;
+      window.location.reload();
     }).addCase(logout.rejected, (state, action) => {
       state.message = action.payload;
     })
