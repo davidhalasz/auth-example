@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const createUser = ({ email, password, username }) => {
-  return new Promise( async (resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       username: username,
@@ -34,22 +34,28 @@ const isEmailExists = (email) => {
 };
 
 const checkPassword = ({ password, plainPassword }) => {
-  return new Promise( async (resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (await bcrypt.compare(plainPassword, password)) {
       resolve(true);
     } else {
       resolve(false);
     }
   }).catch((err) => {
-    return new Error("Ooops! Something happened. Try later.");
+    reject(new Error("Ooops! Something happened. Try later."));
   });
 };
 
 const createToken = (userId) => {
-  const token = jwt.sign({user_id: userId}, "tokenSecretKey", {
-    expiresIn: "2h",
-  });
+  try {
+    const token = jwt.sign({ user_id: userId }, "tokenSecretKey", {
+      expiresIn: "2h",
+    });
+    return token;
+  } catch (error) {
+    return new Error("Ooops! Something happened. Try later.");
+  }
 };
+
 
 module.exports = {
   createUser,

@@ -1,4 +1,5 @@
 const authService = require("../services/authService");
+const User = require("../models/user");
 
 const createUser = async (req, res, next) => {
   authService
@@ -36,7 +37,7 @@ const login = (req, res, next) => {
           if (boolValue) {
             let foundUser = {email: data.email, username: data.username};
             const token = authService.createToken(data._id);
-            console.log(data);
+
             req.session.jwt = token;
             return res
               .status(200)
@@ -54,7 +55,28 @@ const login = (req, res, next) => {
     });
 };
 
+const getCurrentUser = async (req, res, next) => {
+  if (!req.session.jwt) {
+    return res.status(401).json({ msg: "Token is expired!" });
+  }
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(req.session.jwt, process.env.TOKEN_KEY);
+  } catch (err) {
+    return res
+      .status(402)
+      .send({ SessionmMsg: "You are not authorized!" });
+  }
+
+  const user = await User.findOne({ _id: decodedToken.user_id }, ["-password"]);
+
+  if (!user)
+    return res.status(404).json({ msg: "User not found!" });
+  res.status(200).json({ user });
+}
+
 module.exports = {
   login,
   createUser,
+  getCurrentUser,
 };

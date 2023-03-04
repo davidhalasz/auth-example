@@ -123,5 +123,7 @@ router.post('/login', loginValidator, validateRequest, authController.login);
  */
 router.post('/register', registerValidator, validateRequest, authController.createUser);
 
+router.get('/currentuser', authController.getCurrentUser);
+
 
 module.exports = router;
