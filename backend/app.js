@@ -60,7 +60,7 @@ var app = express();
 
 app.use(
   session({
-    secret: "supersecret",
+    secret: "sessionSecretKey",
     resave: false,
     saveUninitialized: true,
     store: store,
