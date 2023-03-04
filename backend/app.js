@@ -10,6 +10,8 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 mongoose.set("strictQuery", true);
 mongoose.connect("mongodb://localhost:27017/AuthDb", {
@@ -26,6 +28,11 @@ try {
 } catch (error) {
   console.log("connection failed...");
 }
+
+let store = new MongoStore({
+  mongoUrl: "mongodb://localhost:27017/AuthDb",
+  collectionName: "sessions",
+});
 
 const options = {
   definition: {
@@ -50,6 +57,18 @@ const options = {
 };
 
 var app = express();
+
+app.use(
+  session({
+    secret: "supersecret",
+    resave: false,
+    saveUninitialized: true,
+    store: store,
+    cookie: {
+      secure: "auto",
+    },
+  })
+);
 
 app.use(
   cors({
