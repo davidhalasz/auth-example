@@ -12,7 +12,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-
+var app = express();
+app.set('trust proxy', 1)
 mongoose.set("strictQuery", true);
 mongoose.connect("mongodb://localhost:27017/AuthDb", {
   useNewUrlParser: true,
@@ -31,7 +32,7 @@ try {
 
 let store = new MongoStore({
   mongoUrl: "mongodb://localhost:27017/AuthDb",
-  collectionName: "sessions",
+  collection: "sessions",
 });
 
 const options = {
@@ -56,8 +57,6 @@ const options = {
   apis: [path.join(__dirname, "/routes/*.js")],
 };
 
-var app = express();
-
 app.use(
   session({
     secret: "sessionSecretKey",
@@ -73,14 +72,14 @@ app.use(
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000"],
+    origin: "http://localhost:3000",
   })
 );
 
+app.use(cookieParser());
 app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api", indexRouter);

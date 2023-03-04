@@ -1,5 +1,6 @@
 const authService = require("../services/authService");
 const User = require("../models/user");
+const jwt = require('jsonwebtoken');
 
 const createUser = async (req, res, next) => {
   authService
@@ -36,9 +37,7 @@ const login = (req, res, next) => {
         .then((boolValue) => {
           if (boolValue) {
             let foundUser = {email: data.email, username: data.username};
-            const token = authService.createToken(data._id);
-
-            req.session.jwt = token;
+            req.session.jwt = authService.createToken(data._id);
             return res
               .status(200)
               .json({ user: foundUser, msg: "User logged in." });
@@ -56,16 +55,17 @@ const login = (req, res, next) => {
 };
 
 const getCurrentUser = async (req, res, next) => {
+  req.session.username = "helloo";
   if (!req.session.jwt) {
     return res.status(401).json({ msg: "Token is expired!" });
   }
   let decodedToken;
   try {
-    decodedToken = jwt.verify(req.session.jwt, process.env.TOKEN_KEY);
+    decodedToken = jwt.verify(req.session.jwt, "tokenSecretKey");
   } catch (err) {
     return res
       .status(402)
-      .send({ SessionmMsg: "You are not authorized!" });
+      .send({ msg: "You are not authorized!" });
   }
 
   const user = await User.findOne({ _id: decodedToken.user_id }, ["-password"]);
@@ -73,7 +73,7 @@ const getCurrentUser = async (req, res, next) => {
   if (!user)
     return res.status(404).json({ msg: "User not found!" });
   res.status(200).json({ user });
-}
+};
 
 module.exports = {
   login,

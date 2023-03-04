@@ -125,5 +125,4 @@ router.post('/register', registerValidator, validateRequest, authController.crea
 
 router.get('/currentuser', authController.getCurrentUser);
 
-
 module.exports = router;
