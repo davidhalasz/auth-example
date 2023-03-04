@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const createUser = ({ email, password, username }) => {
   return new Promise( async (resolve, reject) => {
@@ -44,8 +45,15 @@ const checkPassword = ({ password, plainPassword }) => {
   });
 };
 
+const createToken = (userId) => {
+  const token = jwt.sign({user_id: userId}, "tokenSecretKey", {
+    expiresIn: "2h",
+  });
+};
+
 module.exports = {
   createUser,
   isEmailExists,
   checkPassword,
+  createToken,
 };

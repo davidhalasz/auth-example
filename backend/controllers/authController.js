@@ -35,6 +35,9 @@ const login = (req, res, next) => {
         .then((boolValue) => {
           if (boolValue) {
             let foundUser = {email: data.email, username: data.username};
+            const token = authService.createToken(data._id);
+            console.log(data);
+            req.session.jwt = token;
             return res
               .status(200)
               .json({ user: foundUser, msg: "User logged in." });
