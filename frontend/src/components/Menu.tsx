@@ -1,10 +1,16 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../app/store";
+import { useAppDispatch, useAppSelector } from "../app/store";
+import { logout } from "../slices/authSlice";
 
 const Menu = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { isLoggedIn, data } = useAppSelector((state) => state.auth);
+
+  const logoutHandler = () => {
+    dispatch(logout)
+  }
 
   return (
     <div className="container mx-auto w-full flex justify-between p-2 text-white font-lg">
@@ -20,7 +26,7 @@ const Menu = () => {
         {isLoggedIn && (
           <Fragment>
             <p>{data.user.username}</p>
-            <button>Logout</button>
+            <button type="button" onClick={() => logoutHandler()}>Logout</button>
           </Fragment>
         )}
       </div>
