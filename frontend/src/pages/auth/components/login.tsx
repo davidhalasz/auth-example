@@ -38,6 +38,7 @@ const Login = ({ currentFormHandler }: LoginProps) => {
     if(!isLoading && data) navigate('/dashboard');
   }, [isLoading, data, navigate]);
 
+
   const handleLoginSubmit = (event: any) => {
     event.preventDefault();
     const email = formState.inputs.email.value;
@@ -45,8 +46,6 @@ const Login = ({ currentFormHandler }: LoginProps) => {
     const credentials: loginType = {email, password};
     dispatch(loginUser(credentials));
   };
-
-
 
   return (
     <Fragment>

@@ -14,7 +14,7 @@ const Home = () => {
         <div className="h-screen w-screen flex flex-col bg-slate-800">
             <Menu />
             <div className="grow w-full h-full flex items-center justify-center text-white">
-                HOME PAGE
+                <h1 className="text-xl">HOME PAGE</h1>
             </div>
         </div>
     );

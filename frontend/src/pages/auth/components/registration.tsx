@@ -1,5 +1,4 @@
-import axios from "axios";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import User from "../../../models/user";
 import { useForm } from "../../../shared/hooks/form-hook";
 import Input from "../../../shared/formElements/Input";
@@ -9,7 +8,7 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../../shared/utils/validators";
 import { useAppDispatch, useAppSelector } from "../../../app/store";
-import { getCurrentUser } from "../../../slices/authSlice";
+import { getCurrentUser, registerUser } from "../../../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
 type RegistrationProps = { currentFormHandler: () => void };
@@ -17,7 +16,7 @@ type RegistrationProps = { currentFormHandler: () => void };
 const Registration = ({ currentFormHandler }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const {isLoading, data} = useAppSelector(state => state.auth);
+  const {isLoading, isSuccess, data} = useAppSelector(state => state.auth);
   const [formState, inputHandler] = useForm(
     {
       username: {
@@ -60,20 +59,10 @@ const Registration = ({ currentFormHandler }: RegistrationProps) => {
           formState.inputs.email.value,
           formState.inputs.password.value
         );
-        try {
-          let response = await axios.post(
-            "http://localhost:9000/api/auth/register",
-            {
-              ...user,
-            }
-          );
-          console.log(response);
-        } catch (error: any) {
-          if (error.response) console.log(error.response.data.msg);
-        }
+        dispatch(registerUser(user));
       }
     }
-  };
+  }; 
 
   return (
     <Fragment>

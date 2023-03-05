@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Menu from "../../components/Menu";
+import Snackbar from "../../shared/formElements/Snackbar";
 import Login from "./components/Login";
 import Registration from "./components/Registration";
 
@@ -29,12 +30,15 @@ const Auth = () => {
   return (
     <div className="h-screen w-screen bg-slate-800 flex flex-col">
       <Menu />
+      
       <div className="relative grow flex items-center justify-center">
+      <Snackbar/>
         <div
           className={
             location.pathname === "/register" ? REGISTER_STYLE : LOGIN_STYLE
           }
         >
+          
           <div className="relative h-full w-full">
             <div className="absolute z-20 h-full w-full">
               <div className="h-1/4 w-full bg-customColor1"></div>
